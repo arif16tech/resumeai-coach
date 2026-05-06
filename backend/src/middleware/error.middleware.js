@@ -1,9 +1,28 @@
 export const errorHandler = (err, req, res, next) => {
   console.error('Error:', err.message);
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  let statusCode = err.statusCode || 500;
+  let message = err.message || 'Internal Server Error';
   const retryAfter = err.retryAfter;
+
+  // Mongoose duplicate key error (e.g. unique email)
+  if (err.code === 11000) {
+    statusCode = 400;
+    const field = Object.keys(err.keyValue || {})[0] || 'field';
+    message = `${field.charAt(0).toUpperCase() + field.slice(1)} already in use`;
+  }
+
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    statusCode = 400;
+    message = Object.values(err.errors).map((e) => e.message).join(', ');
+  }
+
+  // Mongoose bad ObjectId
+  if (err.name === 'CastError') {
+    statusCode = 400;
+    message = `Invalid ${err.path}: ${err.value}`;
+  }
 
   if (statusCode === 429 && retryAfter) {
     res.set('Retry-After', retryAfter);

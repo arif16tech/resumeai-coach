@@ -1,14 +1,8 @@
-import { validationResult } from 'express-validator';
 import User from '../models/user.model.js';
 import { generateToken } from '../middleware/auth.middleware.js';
 import { asyncHandler, AppError } from '../middleware/error.middleware.js';
 
 export const register = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-
   const { name, email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -27,11 +21,6 @@ export const register = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select('+password');

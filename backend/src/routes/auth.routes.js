@@ -17,11 +17,9 @@ const router = express.Router();
 router.post(
   '/register',
   authLimiter,
-  [
-    body('name').trim().notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Valid email required'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  ],
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email').isEmail().withMessage('Valid email required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   validateRequest,
   register
 );
@@ -29,10 +27,8 @@ router.post(
 router.post(
   '/login',
   authLimiter,
-  [
-    body('email').isEmail().withMessage('Valid email required'),
-    body('password').notEmpty().withMessage('Password required'),
-  ],
+  body('email').isEmail().withMessage('Valid email required'),
+  body('password').notEmpty().withMessage('Password required'),
   validateRequest,
   login
 );
