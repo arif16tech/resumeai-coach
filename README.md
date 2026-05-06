@@ -22,7 +22,7 @@ A production-ready AI-powered Resume Analyzer + Interview Coach built with the M
 ## 📁 Project Structure
 
 ```text
-ai-resume-coach/
+resumeai-coach/
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # DB, Cloudinary configs
@@ -70,7 +70,7 @@ ai-resume-coach/
 
 ```bash
 git remote add origin https://github.com/arif16tech/resumeai-coach.git
-cd ai-resume-coach
+cd resumeai-coach
 ```
 
 ### 2. Set up the Backend
