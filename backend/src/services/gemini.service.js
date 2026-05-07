@@ -36,7 +36,7 @@ const safeJsonParse = (text) => {
 };
 
 const handleGeminiError = (error) => {
-  // console.error("Gemini Error Details:", error);
+  console.error("Gemini Error Details:", error);
   const message = error.message || '';
   
   if (message.includes('429') || message.includes('Too Many Requests') || message.includes('quota')) {

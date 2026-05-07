@@ -17,11 +17,11 @@ export const uploadResume = asyncHandler(async (req, res) => {
   ]);
   console.timeEnd('PDF & Cloudinary Processing');
 
-  // Check if text extraction failed or was insufficient
-  if (textResult.status === 'rejected' || !textResult.value || textResult.value.length < 50) {
+  // Check if text extraction failed
+  if (textResult.status === 'rejected') {
     // If Cloudinary succeeded, clean it up to prevent orphaned files
     if (cloudResult.status === 'fulfilled' && cloudResult.value?.public_id) {
-      deleteFromCloudinary(cloudResult.value.public_id).catch(err => 
+      deleteFromCloudinary(cloudResult.value.public_id).catch(err =>
         console.error('Cloudinary cleanup failed during aborted upload:', err.message)
       );
     }
