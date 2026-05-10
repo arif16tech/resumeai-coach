@@ -1,6 +1,6 @@
 # 🚀 ResumeAI Coach — Resume Analysis & Interview Prep
 
-A production-ready AI-powered Resume Analyzer + Interview Coach built with the MERN stack and Google Gemini API.
+A full-stack AI career platform that analyzes resumes, generates personalized interview questions, and provides AI-powered interview preparation using MERN and Gemini AI.
 
 ---
 
@@ -12,9 +12,9 @@ A production-ready AI-powered Resume Analyzer + Interview Coach built with the M
 | Components & UI | Lucide React (Icons), Recharts (Data Visualization) |
 | Backend | Node.js + Express (ES Modules) |
 | Database | MongoDB + Mongoose |
-| Auth & Security | JWT (httpOnly cookies) + bcrypt + Helmet + Express Rate Limit |
+| Auth & Security | JWT (httpOnly cookies) + bcrypt + Google OAuth 2.0 + Helmet + Express Rate Limit |
 | File Upload | Multer (Memory Storage) + Cloudinary + Streamifier |
-| AI | Google Gemini API (`gemini-3-flash-preview`) |
+| AI | Google Gemini API (`gemini-2.0-flash`) |
 | PDF Parsing | `pdf-parse` |
 
 ---
@@ -64,12 +64,18 @@ resumeai-coach/
 
 ---
 
+## 🌍 Live Demo
+
+https://resumeai-coach.vercel.app/
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Clone the project
 
 ```bash
-git remote add origin https://github.com/arif16tech/resumeai-coach.git
+git clone https://github.com/arif16tech/resumeai-coach.git
 cd resumeai-coach
 ```
 
@@ -93,6 +99,9 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
+# Google OAuth 2.0
+GOOGLE_CLIENT_ID=your_google_client_id
+
 # Gemini
 GEMINI_API_KEY=your_gemini_api_key
 ```
@@ -113,6 +122,7 @@ Create a `.env` file in the `frontend` folder:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
 Start the frontend:
@@ -126,10 +136,12 @@ npm run dev
 
 ### 🔐 Authentication & Security
 - Email/password registration & login
+- **Google OAuth 2.0** — one-click sign-in via Google account
+- **OTP-based verification** — email one-time password flow for account confirmation
 - JWT stored securely in `httpOnly` cookies
 - Password hashing with bcrypt
 - **Helmet.js** for securing Express HTTP headers
-- **Express Rate Limiting** to prevent abuse (User-based API limits for AI endpoints)
+- **Express Rate Limiting** to prevent abuse (user-based API limits for AI endpoints)
 
 ### 📄 Resume Module
 - Upload PDF resume (up to 10MB), parsed entirely in-memory (`multer.memoryStorage`)
@@ -176,9 +188,11 @@ Features:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/auth/register` | Register with email/password |
-| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/login` | Login with email/password |
 | POST | `/api/auth/logout` | Logout |
-| GET | `/api/auth/me` | Get current user |
+| GET | `/api/auth/me` | Get current authenticated user |
+| GET | `/api/auth/google` | Initiate Google OAuth 2.0 login |
+| GET | `/api/auth/google/callback` | Google OAuth callback handler |
 
 ### Resume
 | Method | Endpoint | Description |
@@ -200,9 +214,9 @@ Features:
 
 ---
 
-## 🚀 Production Readiness Improvements
+## 🛡️ Stability & Security Improvements
 
-This project has been optimized for MVP-level production:
+This project has been hardened for MVP-level stability:
 - **Database Indexing:** Compound indexes (`{ user: 1, createdAt: -1 }`) on `Resume` and `Interview` models to prevent slow collection scans.
 - **Rate Limiting:** Specific endpoint limiters:
   - Auth routes (`/login`, `/register`): 5 requests / 15 minutes.
@@ -217,5 +231,5 @@ This project has been optimized for MVP-level production:
 
 - **Security:** Helmet is used for header security. Production environments must strictly set the `CLIENT_URL` in `.env` for accurate CORS policy enforcement.
 - **File Uploads:** Files are processed dynamically in-memory and streamed to Cloudinary using `streamifier` to bypass disk I/O bottlenecks.
-- **AI Integration:** The system uses `gemini-3-flash-preview` and native JSON generation mode (`responseMimeType: 'application/json'`) ensuring strict, parseable AI responses without regex hacks.
+- **AI Integration:** The system uses `gemini-2.0-flash` and native JSON generation mode (`responseMimeType: 'application/json'`) ensuring strict, parseable AI responses without regex hacks.
 - **Voice Input:** Voice input utilizes the browser's native Web Speech API (Chrome/Edge recommended).

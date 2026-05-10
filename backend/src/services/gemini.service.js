@@ -7,10 +7,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
  * Initializes the Gemini model.
- * Uses gemini-3-flash-preview: The best model for fast, cost-effective, and structured tasks on the free tier.
+ * Uses gemini-2.0-flash: Stable GA model — fast, cost-effective, and globally available.
  */
 const getModel = (requireJson = false, systemInstruction = null) => {
-  const modelConfig = { model: 'gemini-3-flash-preview' };
+  const modelConfig = { model: 'gemini-2.5-flash' };
   const generationConfig = {};
 
   if (systemInstruction) {
@@ -42,15 +42,19 @@ const handleGeminiError = (error) => {
   if (message.includes('429') || message.includes('Too Many Requests') || message.includes('quota')) {
     throw { statusCode: 429, message: 'AI service quota exceeded. Please try again in a few moments.', retryAfter: 60 };
   }
-  
+
   if (message.includes('401') || message.includes('Unauthorized') || message.includes('invalid API key')) {
     throw { statusCode: 500, message: 'AI service authentication failed. Please contact support.' };
   }
-  
+
+  if (message.includes('location') || message.includes('User location is not supported')) {
+    throw { statusCode: 503, message: 'AI service is not available in this region. Please contact support.' };
+  }
+
   if (message.includes('RESOURCE_EXHAUSTED')) {
     throw { statusCode: 429, message: 'AI service is temporarily busy. Please try again shortly.', retryAfter: 30 };
   }
-  
+
   if (message.includes('ERR_') || message.includes('ECONNREFUSED')) {
     throw { statusCode: 503, message: 'AI service is temporarily unavailable. Please try again.' };
   }
